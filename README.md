@@ -23,3 +23,33 @@ The workflow goes like this,
 1. Generate a bunch of histories to execute on a database.
 2. Execute those histories on a database using provided `traits`. (see in `examples`).
 3. Verify the executed histories for `--cc`(causal consistency), `--si`(snapshot isolation), `--ser`(serialization).  
+
+-------
+
+### Build on Ubuntu 22.04
+
+```sh
+# 0. clone this repo and init sub modules
+
+# 1. install dependencies, including rust, cargo >= 1.70.0, libssl-dev, docker-compose
+
+# 2. build and start docker service of postgres
+docker-compose up -d -f docker/postgres/docker-compose.yml
+# the above command could not be parsed correctly, so the below command was used instead 
+# (-f means --file, -d is an option for up)
+sudo docker-compose -f docker/postgres/docker-compose.yml up -d
+
+# 3. build dbcop
+cargo build --release
+# There's an inherent bug in Cargo.toml, that is package funty@1.2.0 was not supported any more, a solution was found in https://stackoverflow.com/questions/74556708/internal-dependency-issue-in-rust, and Cargo.toml was updated.
+
+```
+
+Dbcop is used to generate histories. For example:
+
+```sh
+# generated histories are stored in /tmp/hist
+# see 'dbcop genrate --help' and 'dbcop run --help'
+dbcop/target/release/dbcop generate -d /tmp/gen -e 2 -n 10 -t 3 -v 2
+dbcop/target/release/dbcop run -d /tmp/gen/ --db postgres-ser -o /tmp/hist 127.0.0.1:5432
+```
