@@ -50,6 +50,14 @@ Dbcop is used to generate histories. For example:
 ```sh
 # generated histories are stored in /tmp/hist
 # see 'dbcop genrate --help' and 'dbcop run --help'
-dbcop/target/release/dbcop generate -d /tmp/gen -e 2 -n 10 -t 3 -v 2
-dbcop/target/release/dbcop run -d /tmp/gen/ --db postgres-ser -o /tmp/hist 127.0.0.1:5432
+cd dbcop
+# generate a history constrainted by UniqueValue
+./target/release/dbcop generate -d /tmp/gen -e 2 -n 10 -t 3 -v 2
+# generate a history in which values may repeat
+./target/release/dbcop generate -d /tmp/gen -e 2 -n 8 -t 4 -v 3 -r 0.5
+
+./target/release/dbcop run -d /tmp/gen/ --db postgres-ser -o /tmp/hist 127.0.0.1:5432
+
+# print a history
+./target/release/dbcop print -d /tmp/hist/hist-00000/
 ```

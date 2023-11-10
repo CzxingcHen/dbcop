@@ -2,7 +2,7 @@ use std::fmt;
 
 use std::collections::HashMap;
 
-use rand::distributions::{Distribution, Bernoulli, Uniform};
+use rand::{distributions::{Distribution, Bernoulli, Uniform}, random, Rng};
 
 use super::distribution::MyDistributionTrait;
 
@@ -38,6 +38,7 @@ pub struct HistoryParams<'a> {
     pub longtxn_size: f64,
     pub key_distribution: &'a dyn MyDistributionTrait,
     pub random_txn_size: bool,
+    pub repeated_value_proportion: f64,
 }
 
 impl fmt::Debug for Event {
@@ -202,11 +203,26 @@ pub fn generate_single_history(
                 } else {
                     let variable = params.key_distribution.sample(&mut random_generator);
                     // let variable = write_variable_range.sample(&mut random_generator);
-                    let value = {
+                    // let value = {
+                    //     let entry = counters.entry(variable).or_insert(0);
+                    //     *entry += 1;
+                    //     *entry
+                    // };
+                    let value = if counters.contains_key(&variable) {
+                        if !random_generator.gen_bool(params.repeated_value_proportion) {
+                            let entry = counters.entry(variable).or_insert(0);
+                            *entry += 1;
+                            *entry
+                        } else {
+                            let range = 1..=counters[&variable];
+                            random_generator.gen_range(range)
+                        }
+                    } else {
                         let entry = counters.entry(variable).or_insert(0);
                         *entry += 1;
                         *entry
                     };
+
                     Event::write(variable, value)
                 }
             };

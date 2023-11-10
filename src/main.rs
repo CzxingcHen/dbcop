@@ -89,6 +89,9 @@ enum Commands {
 
         #[clap(long, action, help = "Randomize size of transactions")]
         random_txn_size: bool,
+
+        #[clap(long, short = 'r', default_value_t = 0.0, help = "Proportion of repeat values")]
+        repeated_value_proportion: f64,
     },
     Print {
         #[clap(short = 'd', help = "Directory containing executed history")]
@@ -132,7 +135,7 @@ fn main() {
 
             println!("{:?}", hist);
         }
-        Commands::Generate { g_directory, n_history, n_node, n_variable, n_transaction, n_event, read_probability, key_distribution, longtxn_proportion, longtxn_size, random_txn_size } => {
+        Commands::Generate { g_directory, n_history, n_node, n_variable, n_transaction, n_event, read_probability, key_distribution, longtxn_proportion, longtxn_size, random_txn_size, repeated_value_proportion } => {
             if !g_directory.is_dir() {
                 fs::create_dir_all(&g_directory).expect("failed to create directory");
             }
@@ -162,6 +165,7 @@ fn main() {
                     longtxn_proportion,
                     longtxn_size,
                     random_txn_size,
+                    repeated_value_proportion
                 }
             );
 
