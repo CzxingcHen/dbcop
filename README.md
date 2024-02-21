@@ -52,7 +52,7 @@ Dbcop is used to generate histories. For example:
 # see 'dbcop genrate --help' and 'dbcop run --help'
 cd dbcop
 # generate a history constrainted by UniqueValue
-./target/release/dbcop generate -d /tmp/gen -e 2 -n 10 -t 3 -v 2
+./target/release/dbcop generate -d /tmp/gen -e 2 -n 10 -t 3 -v 2 # arg --key-distrib [uniform | zipf | hotspot] is acceptable, default uniform
 # generate a history in which values may repeat
 ./target/release/dbcop generate -d /tmp/gen -e 2 -n 8 -t 4 -v 3 -r 0.5
 
